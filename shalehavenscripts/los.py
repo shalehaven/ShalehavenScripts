@@ -67,8 +67,34 @@ def combineJibData(pathToJib):
     return jibData
 
 """
- This mergers all Revenue from all subfolders within Revenue folder 
-  
+Reads every tab in the Well Schedule master workbook and concatenates them
+into a single flat CSV (well_schedule.csv) in the database folder. Adds a
+"Sheet Name" column so the source tab survives the rollup.
+"""
+def combineWellSchedule(pathToWellMaster):
+    sheets = pd.read_excel(pathToWellMaster, sheet_name=None)
+    totalPattern = re.compile(r"\btotal\b", re.IGNORECASE)
+    frames = []
+    for sheetName, df in sheets.items():
+        df = df.copy()
+        isTotal = df.apply(
+            lambda row: any(
+                isinstance(v, str) and totalPattern.search(v) for v in row
+            ),
+            axis=1,
+        )
+        df = df[~isTotal]
+        df["Sheet Name"] = sheetName
+        frames.append(df)
+    wellSchedule = pd.concat(frames, ignore_index=True)
+    wellSchedule.to_excel(os.path.join(pathToDatabase, "well_schedule.xlsx"), index=False)
+
+    return wellSchedule
+
+
+"""
+ This mergers all Revenue from all subfolders within Revenue folder
+
 """
 def combineRevenueData(pathToRevenue):
     revenueData = pd.DataFrame() # create empty dataframe to store combined data
