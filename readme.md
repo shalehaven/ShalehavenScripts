@@ -1,8 +1,7 @@
 # Shalehaven Scripts
 
-Python toolkit for oil & gas investment analysis and operations at **Shalehaven Partners** — supporting tax-advantaged, non-operated oil & gas projects in proven basins. Developed by Michael Tanner. For questions or contributions, contact [Michael Tanner](mailto:dev@shalehaven.com).
-
-Process geospatial constraints, run production models, and evaluate economics to inform drilling decisions and investor returns.
+Python toolkit for oil & gas investment analysis and operations at **Shalehaven Partners** 
+Developed by Michael Tanner. For questions or contributions, contact [Michael Tanner](mailto:dev@shalehaven.com).
 
 ## Core Scripts
 
@@ -33,6 +32,12 @@ Process geospatial constraints, run production models, and evaluate economics to
   - `generatePnlData(jibData, revenueData)` — Generates P&L dataset in long format for Power BI
     - `jibData` (DataFrame) — combined JIB data from `combineJibData()`
     - `revenueData` (DataFrame) — combined revenue data from `combineRevenueData()`
+  - `generateAfeActualReport(afeMasterPath, jibMasterPath, outputDir)` — Reconciles AFE (projected) vs JIB (actual) costs and writes `afe_actual.xlsx` with `Facts` + `Dimensions` sheets for Power BI
+    - `afeMasterPath` (string, optional) — path to the AFE master workbook (default `SHALEHAVEN_AFE_MASTER_PATH` env var)
+    - `jibMasterPath` (string, optional) — path to the JIB master workbook (default `SHALEHAVEN_JIB_MASTER_PATH` env var)
+    - `outputDir` (string, optional) — destination folder for the report (default `SHALEHAVEN_DATABASE_PATH` env var)
+  - `combineWellSchedule(pathToWellMaster)` — Rolls up every tab in the Well Schedule master into a flat `well_schedule.xlsx`, tagging each row with its source `Sheet Name` and dropping summary rows containing the word "total"
+    - `pathToWellMaster` (string) — file path to the Well Schedule master workbook
 
 - **`novi.py`** — Novi Labs client + local bulk export pipeline. Most downstream functions read from the local bulk export at `D:\novi` (configurable via `NOVI_BULK_DATA_PATH`) instead of paginating the API. Run `runNoviBulk()` once per export refresh to populate it.
   - `readAFESummary(pathToFile)` — Reads an AFE Summary Excel file into a DataFrame
